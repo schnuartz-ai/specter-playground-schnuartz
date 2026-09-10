@@ -88,8 +88,7 @@ class EnterSeedScreen(lv.obj):
         self.word_display.set_style_border_width(0, 0)
         self.word_display.set_style_pad_all(PAD_SM, 0)
         self.word_display.set_layout(lv.LAYOUT.FLEX)
-        self.word_display.set_flex_flow(lv.FLEX_FLOW.ROW)
-        self.word_display.set_style_flex_wrap(lv.FLEX_FLOW.ROW_WRAP, 0)
+        self.word_display.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
         self.word_display.set_style_pad_row(PAD_XS, 0)
         self.word_display.set_style_pad_column(PAD_XS, 0)
 

@@ -119,19 +119,19 @@ class ControlServer:
             if not widget:
                 return {"ok": False, "error": "Widget not found: " + text}
 
-            # Send click event
-            widget.send_event(lv.EVENT.CLICKED, None)
-
+            # Capture identity BEFORE dispatching — the click handler may
+            # navigate away and delete this widget, after which touching it
+            # (even .get_x()) reads freed memory and segfaults the simulator.
             info = {
                 "type": type(widget).__name__,
                 "x": widget.get_x(),
                 "y": widget.get_y(),
+                "text": text,
             }
-            if label and hasattr(label, "get_text"):
-                try:
-                    info["text"] = label.get_text()
-                except:
-                    pass
+
+            # Send click event (widget may be destroyed as a side effect)
+            widget.send_event(lv.EVENT.CLICKED, None)
+
             return {"ok": True, "clicked": info}
 
         return {"ok": False, "error": "Must provide 'text' to identify widget"}

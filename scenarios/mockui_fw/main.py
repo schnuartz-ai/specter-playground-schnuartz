@@ -147,6 +147,16 @@ if not _ON_HARDWARE and '--control' in sys.argv:
     from sim_control import ControlServer
     ControlServer(scr)
 
+# Main UI loop.
+#
+# An unhandled exception raised inside an LVGL event/timer callback propagates
+# out of display.update() and would otherwise terminate the whole process,
+# leaving the simulator frozen with no automatic restart. Catch it here so a
+# single buggy screen or handler degrades gracefully (logged traceback) instead
+# of taking the entire device down.
 while True:
-    display.update(30)
+    try:
+        display.update(30)
+    except Exception as e:
+        sys.print_exception(e)
     time.sleep_ms(30)

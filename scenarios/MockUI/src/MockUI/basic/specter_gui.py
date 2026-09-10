@@ -90,8 +90,29 @@ class SpecterGui(lv.obj):
         self.seed_dropdown.refresh()
         self.wallet_list.refresh()
 
+    def _dismiss_overlays(self):
+        """Tear down any modal/dropdown floating on the top layer.
+
+        Screens and the seed dropdown parent their modals to ``layer_top`` so
+        they render above everything. Those overlays are NOT children of
+        ``current_screen``, so navigating away (nav bar, back button, a modal
+        action that calls ``show_menu``) would otherwise strand them on screen
+        where they swallow all touch input and make the device look frozen.
+        """
+        try:
+            lv.display_get_default().get_layer_top().clean()
+        except Exception:
+            pass
+        dd = getattr(self, "seed_dropdown", None)
+        if dd is not None:
+            dd._dropdown_open = False
+            dd._modal = None
+
     def show_menu(self, target_menu_id=None):
         """Navigate to a menu/screen by ID."""
+        # Drop any floating modal/dropdown from the previous view
+        self._dismiss_overlays()
+
         # Clean up current screen
         if self.current_screen:
             self.current_screen.delete()
@@ -165,7 +186,9 @@ class SpecterGui(lv.obj):
         self.current_screen.set_style_border_width(0, 0)
 
         lbl = lv.label(self.current_screen)
-        title = (menu_id or "").replace("_", " ").title()
+        # NB: MicroPython's str has no .title(), so title-case by hand.
+        words = (menu_id or "").replace("_", " ").split()
+        title = " ".join(w[:1].upper() + w[1:] for w in words)
         lbl.set_text(title)
         lbl.set_style_text_color(WHITE_HEX, 0)
         lbl.set_style_text_font(lv.font_montserrat_22, 0)

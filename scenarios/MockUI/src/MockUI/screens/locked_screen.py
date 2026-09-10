@@ -59,9 +59,8 @@ class LockedScreen(lv.obj):
         pad.set_style_border_width(0, 0)
         pad.set_style_pad_all(0, 0)
         pad.set_layout(lv.LAYOUT.FLEX)
-        pad.set_flex_flow(lv.FLEX_FLOW.ROW)
+        pad.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
         pad.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-        pad.set_style_flex_wrap(lv.FLEX_FLOW.ROW_WRAP, 0)
         pad.set_style_pad_row(PAD_SM, 0)
         pad.set_style_pad_column(PAD_SM, 0)
 

@@ -2,6 +2,22 @@
 import lvgl as lv
 
 
+def _label_text(obj):
+    """Return the text of ``obj`` if it is an lv.label, else None.
+
+    In the MicroPython LVGL binding every object exposes ``get_text``
+    regardless of its real type, and calling it on a non-label reads a
+    bogus pointer and segfaults the whole simulator. Gate on the real
+    LVGL class instead of ``hasattr``.
+    """
+    try:
+        if obj.check_type(lv.label_class):
+            return obj.get_text()
+    except Exception:
+        pass
+    return None
+
+
 def get_widget_info(obj):
     """Extract info from single widget."""
     info = {
@@ -10,15 +26,9 @@ def get_widget_info(obj):
         "y": obj.get_y(),
         "width": obj.get_width(),
         "height": obj.get_height(),
-        "text": None,
+        "text": _label_text(obj),
         "children": [],
     }
-    # Try to get text for labels
-    if hasattr(obj, "get_text"):
-        try:
-            info["text"] = obj.get_text()
-        except:
-            pass
     return info
 
 
@@ -35,13 +45,9 @@ def get_widget_tree(obj):
 def find_widget_by_text(obj, text, parent=None):
     """Find widget containing label with given text. Returns (widget, parent)."""
     # Check if this is a label with matching text
-    if hasattr(obj, "get_text"):
-        try:
-            if obj.get_text() == text:
-                # Return parent (the button) if exists, else the label itself
-                return (parent if parent else obj, obj)
-        except:
-            pass
+    if _label_text(obj) == text:
+        # Return parent (the button) if exists, else the label itself
+        return (parent if parent else obj, obj)
 
     # Recurse into children
     child_count = obj.get_child_count()
