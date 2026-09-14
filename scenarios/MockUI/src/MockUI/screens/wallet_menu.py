@@ -6,11 +6,13 @@ import lvgl as lv
 from ..basic.ui_consts import (
     PAD_MD, PAD_SM, PAD_LG, PAD_XS,
     BG_BLACK_HEX, BG_CARD_HEX, BG_ELEVATED_HEX,
-    WHITE_HEX, GREY_LIGHT_HEX, GREY_DARK_HEX, CYAN_HEX,
+    WHITE_HEX, GREY_LIGHT_HEX, GREY_DARK_HEX, CYAN_HEX, CYAN_DARK_HEX,
     RED_HEX, GREEN_HEX, ORANGE_HEX,
+    WALLET_ROW_HEIGHT, WALLET_ROW_HEIGHT_ACTIVE,
 )
 from ..basic.symbol_lib import BTC_ICONS
 from ..basic.modal_overlay import ModalOverlay
+from ..basic.seed_dropdown import SeedDropdown
 from ..stubs.wallet import ADDR_NATIVE_SEGWIT, ADDR_LEGACY, ADDR_TAPROOT, ADDR_NESTED_SEGWIT
 
 
@@ -100,62 +102,56 @@ class WalletMenu(lv.obj):
         self.set_style_pad_all(PAD_MD, 0)
         self.set_layout(lv.LAYOUT.FLEX)
         self.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-        self.set_style_pad_row(PAD_XS, 0)
+        self.set_style_pad_row(PAD_SM, 0)
 
         state = gui.specter_state
 
-        # Seed dropdown at top of wallet menu
-        seed_row = lv.obj(self)
-        seed_row.set_size(lv.pct(100), 36)
-        seed_row.set_style_bg_color(BG_CARD_HEX, 0)
-        seed_row.set_style_bg_opa(lv.OPA.COVER, 0)
-        seed_row.set_style_radius(8, 0)
-        seed_row.set_style_border_width(0, 0)
-        seed_row.set_style_pad_left(PAD_MD, 0)
-        seed_row.add_flag(lv.obj.FLAG.CLICKABLE)
+        # "Wallets from main seed" caption + the SAME interactive seed dropdown
+        # used on the main dashboard (tap to switch seeds without leaving this screen).
+        caption = lv.label(self)
+        caption.set_text("Wallets from main seed")
+        caption.set_style_text_font(lv.font_montserrat_22, 0)
+        caption.set_style_text_color(GREY_LIGHT_HEX, 0)
 
-        seed_ico = lv.image(seed_row)
-        BTC_ICONS.KEY(CYAN_HEX).add_to_parent(seed_ico, zoom=100)
-        seed_ico.align(lv.ALIGN.LEFT_MID, 0, 0)
+        self.seed_dropdown = SeedDropdown(gui, parent=self, on_change=self._build_wallets)
 
-        seed_name = state.active_seed.label if state.active_seed else "No seed"
-        if state.active_seed and state.active_seed.passphrase:
-            seed_name = seed_name + " + PP"
-        seed_lbl = lv.label(seed_row)
-        seed_lbl.set_text("Wallets from: " + seed_name)
-        seed_lbl.set_style_text_font(lv.font_montserrat_16, 0)
-        seed_lbl.set_style_text_color(CYAN_HEX, 0)
-        seed_lbl.align(lv.ALIGN.LEFT_MID, 30, 0)
+        # Container for the grouped wallet list, rebuilt whenever the seed changes.
+        self._list = lv.obj(self)
+        self._list.set_size(lv.pct(100), lv.SIZE_CONTENT)
+        self._list.set_style_bg_opa(lv.OPA.TRANSP, 0)
+        self._list.set_style_border_width(0, 0)
+        self._list.set_style_pad_all(0, 0)
+        self._list.set_style_pad_row(PAD_XS, 0)
+        self._list.set_layout(lv.LAYOUT.FLEX)
+        self._list.set_flex_flow(lv.FLEX_FLOW.COLUMN)
 
-        arrow = lv.label(seed_row)
-        arrow.set_text(lv.SYMBOL.DOWN)
-        arrow.set_style_text_color(GREY_LIGHT_HEX, 0)
-        arrow.align(lv.ALIGN.RIGHT_MID, -PAD_SM, 0)
+        self._build_wallets()
 
-        seed_row.add_event_cb(lambda e: gui.show_menu("seed_management"), lv.EVENT.CLICKED, None)
+    def _build_wallets(self):
+        state = self.gui.specter_state
+        self._list.clean()
 
-        # Build grouped wallet list
         wallets = state.wallets_for_seed(state.active_seed) or state.registered_wallets
         groups = _build_grouped(wallets)
 
         if not groups:
-            empty = lv.label(self)
+            empty = lv.label(self._list)
             empty.set_text("No wallets registered")
             empty.set_style_text_color(GREY_LIGHT_HEX, 0)
             return
 
         for type_heading, addr_groups in groups:
             # === TYPE HEADING (big) ===
-            th = lv.label(self)
+            th = lv.label(self._list)
             th.set_text(type_heading)
-            th.set_style_text_font(lv.font_montserrat_22, 0)
+            th.set_style_text_font(lv.font_montserrat_28, 0)
             th.set_style_text_color(WHITE_HEX, 0)
 
             for addr_heading, group_wallets in addr_groups:
-                # === ADDRESS SUBHEADING (small) ===
-                ah = lv.label(self)
+                # === ADDRESS SUBHEADING ===
+                ah = lv.label(self._list)
                 ah.set_text(addr_heading)
-                ah.set_style_text_font(lv.font_montserrat_12, 0)
+                ah.set_style_text_font(lv.font_montserrat_22, 0)
                 ah.set_style_text_color(GREY_LIGHT_HEX, 0)
 
                 for w in group_wallets:
@@ -165,35 +161,40 @@ class WalletMenu(lv.obj):
         state = self.gui.specter_state
         is_active = state.active_wallet is wallet
 
-        row = lv.button(self)
-        row.set_size(lv.pct(100), 44)
+        row = lv.button(self._list)
+        row.set_size(lv.pct(100), WALLET_ROW_HEIGHT_ACTIVE if is_active else WALLET_ROW_HEIGHT)
         row.set_style_bg_color(BG_ELEVATED_HEX if is_active else BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(8, 0)
+        row.set_style_radius(10, 0)
         row.set_style_shadow_width(0, 0)
         row.set_style_pad_left(PAD_MD, 0)
         row.set_style_pad_right(PAD_SM, 0)
         if is_active:
-            row.set_style_border_width(1, 0)
+            row.set_style_border_width(2, 0)
+            row.set_style_border_side(lv.BORDER_SIDE.FULL, 0)
             row.set_style_border_color(CYAN_HEX, 0)
         else:
-            row.set_style_border_width(0, 0)
+            # Left accent bar marks these as a distinct, selectable list
+            # rather than plain nav buttons (same treatment as the dashboard).
+            row.set_style_border_width(4, 0)
+            row.set_style_border_side(lv.BORDER_SIDE.LEFT, 0)
+            row.set_style_border_color(CYAN_DARK_HEX, 0)
 
         row.set_layout(lv.LAYOUT.FLEX)
         row.set_flex_flow(lv.FLEX_FLOW.ROW)
         row.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-        row.set_style_pad_column(PAD_XS, 0)
+        row.set_style_pad_column(PAD_SM, 0)
 
         # Account
         acc = lv.label(row)
         acc.set_text("Acc" + str(wallet.account))
-        acc.set_style_text_font(lv.font_montserrat_12, 0)
+        acc.set_style_text_font(lv.font_montserrat_16, 0)
         acc.set_style_text_color(CYAN_HEX, 0)
 
         # Name
         name = lv.label(row)
         name.set_text(wallet.label)
-        name.set_style_text_font(lv.font_montserrat_16, 0)
+        name.set_style_text_font(lv.font_montserrat_22, 0)
         name.set_style_text_color(WHITE_HEX, 0)
         name.set_flex_grow(1)
 
@@ -204,7 +205,7 @@ class WalletMenu(lv.obj):
                 app_ico = lv.image(row)
                 icon = _get_app_icon(app)
                 if icon:
-                    icon.add_to_parent(app_ico, zoom=100)
+                    icon.add_to_parent(app_ico, zoom=140)
 
         # Click → wallet info
         row.add_event_cb(lambda e, w=wallet: self._open_wallet(w), lv.EVENT.CLICKED, None)

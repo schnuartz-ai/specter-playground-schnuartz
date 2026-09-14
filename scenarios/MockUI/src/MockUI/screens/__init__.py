@@ -67,6 +67,9 @@ def get_screen_class(screen_id):
     elif screen_id == "settings":
         from .settings_menu import SettingsMenu
         return SettingsMenu
+    elif screen_id == "security_settings":
+        from .security_settings_screen import SecuritySettingsScreen
+        return SecuritySettingsScreen
     elif screen_id == "interfaces":
         from .interfaces_screen import InterfacesScreen
         return InterfacesScreen

@@ -29,7 +29,7 @@ class SigningScreen(lv.obj):
         # Title
         title = lv.label(self)
         title.set_text("Sign Transaction")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         # Transaction summary (mock data)
@@ -73,7 +73,7 @@ class SigningScreen(lv.obj):
 
         reject_lbl = lv.label(reject_btn)
         reject_lbl.set_text("Reject")
-        reject_lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        reject_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         reject_lbl.set_style_text_color(RED_HEX, 0)
         reject_lbl.center()
 
@@ -81,23 +81,23 @@ class SigningScreen(lv.obj):
 
     def _add_info_row(self, label, value):
         row = lv.obj(self)
-        row.set_size(lv.pct(100), 44)
+        row.set_size(lv.pct(100), 56)
         row.set_style_bg_color(BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(8, 0)
+        row.set_style_radius(10, 0)
         row.set_style_border_width(0, 0)
         row.set_style_pad_left(PAD_MD, 0)
         row.set_style_pad_right(PAD_MD, 0)
 
         key = lv.label(row)
         key.set_text(label)
-        key.set_style_text_font(lv.font_montserrat_12, 0)
+        key.set_style_text_font(lv.font_montserrat_16, 0)
         key.set_style_text_color(GREY_LIGHT_HEX, 0)
         key.align(lv.ALIGN.LEFT_MID, 0, 0)
 
         val = lv.label(row)
         val.set_text(value)
-        val.set_style_text_font(lv.font_montserrat_16, 0)
+        val.set_style_text_font(lv.font_montserrat_22, 0)
         val.set_style_text_color(WHITE_HEX, 0)
         val.align(lv.ALIGN.RIGHT_MID, 0, 0)
 

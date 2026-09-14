@@ -1,7 +1,7 @@
 """Firmware info screen."""
 import lvgl as lv
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM, PAD_LG,
+    PAD_MD, PAD_SM, PAD_LG, ROW_HEIGHT, ROW_ICON_ZOOM,
     BG_BLACK_HEX, BG_CARD_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, GREY_DARK_HEX, CYAN_HEX,
 )
@@ -29,7 +29,7 @@ class FirmwareScreen(lv.obj):
 
         title = lv.label(self)
         title.set_text("Firmware")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         self._add_info_row("Version", gui.specter_state.fw_version)
@@ -52,32 +52,32 @@ class FirmwareScreen(lv.obj):
 
     def _add_info_row(self, label, value):
         row = lv.obj(self)
-        row.set_size(lv.pct(100), 44)
+        row.set_size(lv.pct(100), 56)
         row.set_style_bg_color(BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(8, 0)
+        row.set_style_radius(10, 0)
         row.set_style_border_width(0, 0)
         row.set_style_pad_left(PAD_MD, 0)
         row.set_style_pad_right(PAD_MD, 0)
 
         key = lv.label(row)
         key.set_text(label)
-        key.set_style_text_font(lv.font_montserrat_16, 0)
+        key.set_style_text_font(lv.font_montserrat_22, 0)
         key.set_style_text_color(GREY_LIGHT_HEX, 0)
         key.align(lv.ALIGN.LEFT_MID, 0, 0)
 
         val = lv.label(row)
         val.set_text(value)
-        val.set_style_text_font(lv.font_montserrat_16, 0)
+        val.set_style_text_font(lv.font_montserrat_22, 0)
         val.set_style_text_color(WHITE_HEX, 0)
         val.align(lv.ALIGN.RIGHT_MID, 0, 0)
 
     def _add_update_btn(self, text, icon):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), 48)
+        btn.set_size(lv.pct(100), ROW_HEIGHT)
         btn.set_style_bg_color(BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        btn.set_style_radius(8, 0)
+        btn.set_style_radius(10, 0)
         btn.set_style_border_width(0, 0)
         btn.set_style_shadow_width(0, 0)
 
@@ -88,14 +88,15 @@ class FirmwareScreen(lv.obj):
         btn.set_style_pad_left(PAD_MD, 0)
 
         ico = lv.image(btn)
-        icon(CYAN_HEX).add_to_parent(ico, zoom=130)
+        icon(CYAN_HEX).add_to_parent(ico, zoom=ROW_ICON_ZOOM)
 
         lbl = lv.label(btn)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(WHITE_HEX, 0)
         lbl.set_flex_grow(1)
 
         arrow = lv.label(btn)
         arrow.set_text(lv.SYMBOL.RIGHT)
+        arrow.set_style_text_font(lv.font_montserrat_16, 0)
         arrow.set_style_text_color(GREY_LIGHT_HEX, 0)

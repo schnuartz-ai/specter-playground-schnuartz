@@ -1,7 +1,7 @@
 """Seed detail screen: dedicated page for a specific seed's options."""
 import lvgl as lv
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM, PAD_LG,
+    PAD_MD, PAD_SM, PAD_LG, ROW_HEIGHT, ROW_ICON_ZOOM,
     BG_BLACK_HEX, BG_CARD_HEX, BG_ELEVATED_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX, RED_HEX, GREEN_HEX,
 )
@@ -50,7 +50,7 @@ class SeedDetailScreen(lv.obj):
 
         name_lbl = lv.label(info_card)
         name_lbl.set_text(self.seed.label)
-        name_lbl.set_style_text_font(lv.font_montserrat_22, 0)
+        name_lbl.set_style_text_font(lv.font_montserrat_28, 0)
         name_lbl.set_style_text_color(WHITE_HEX, 0)
         name_lbl.align(lv.ALIGN.LEFT_MID, 55, -10)
 
@@ -70,10 +70,10 @@ class SeedDetailScreen(lv.obj):
 
         # Go to Dashboard with this seed
         dash_btn = lv.button(self)
-        dash_btn.set_size(lv.pct(100), 48)
+        dash_btn.set_size(lv.pct(100), ROW_HEIGHT)
         dash_btn.set_style_bg_color(CYAN_HEX, 0)
         dash_btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        dash_btn.set_style_radius(8, 0)
+        dash_btn.set_style_radius(10, 0)
         dash_btn.set_style_border_width(0, 0)
         dash_btn.set_style_shadow_width(0, 0)
 
@@ -83,11 +83,11 @@ class SeedDetailScreen(lv.obj):
         dash_btn.set_style_pad_column(PAD_SM, 0)
 
         d_ico = lv.image(dash_btn)
-        BTC_ICONS.HOME(WHITE_HEX).add_to_parent(d_ico, zoom=130)
+        BTC_ICONS.HOME(WHITE_HEX).add_to_parent(d_ico, zoom=ROW_ICON_ZOOM)
 
         d_lbl = lv.label(dash_btn)
         d_lbl.set_text("Go to Dashboard")
-        d_lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        d_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         d_lbl.set_style_text_color(WHITE_HEX, 0)
 
         dash_btn.add_event_cb(self._go_dashboard, lv.EVENT.CLICKED, None)
@@ -110,10 +110,10 @@ class SeedDetailScreen(lv.obj):
 
     def _add_option(self, text, icon, target, color=None):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), 48)
+        btn.set_size(lv.pct(100), ROW_HEIGHT)
         btn.set_style_bg_color(BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        btn.set_style_radius(8, 0)
+        btn.set_style_radius(10, 0)
         btn.set_style_border_width(0, 0)
         btn.set_style_shadow_width(0, 0)
 
@@ -125,17 +125,18 @@ class SeedDetailScreen(lv.obj):
 
         ico = lv.image(btn)
         txt_color = color if color else CYAN_HEX
-        icon(txt_color).add_to_parent(ico, zoom=140)
+        icon(txt_color).add_to_parent(ico, zoom=ROW_ICON_ZOOM)
 
         lbl = lv.label(btn)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(color if color else WHITE_HEX, 0)
         lbl.set_flex_grow(1)
 
         # Arrow indicator
         arrow = lv.label(btn)
         arrow.set_text(lv.SYMBOL.RIGHT)
+        arrow.set_style_text_font(lv.font_montserrat_16, 0)
         arrow.set_style_text_color(GREY_LIGHT_HEX, 0)
 
         btn.add_event_cb(lambda e, t=target: self._navigate(t), lv.EVENT.CLICKED, None)

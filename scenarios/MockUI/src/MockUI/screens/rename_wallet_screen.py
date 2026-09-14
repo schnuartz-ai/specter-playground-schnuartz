@@ -30,14 +30,14 @@ class RenameWalletScreen(lv.obj):
 
         title = lv.label(self)
         title.set_text("Rename Wallet")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         # Name input
         self.name_ta = lv.textarea(self)
         self.name_ta.set_text(self.wallet.label if self.wallet else "")
         self.name_ta.set_width(lv.pct(100))
-        self.name_ta.set_height(50)
+        self.name_ta.set_height(60)
         self.name_ta.set_style_text_font(lv.font_montserrat_22, 0)
 
         def _on_commit(new_name):

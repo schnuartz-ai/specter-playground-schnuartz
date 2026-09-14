@@ -52,35 +52,35 @@ class XPubExportScreen(lv.obj):
 
     def _add_xpub_row(self, name, path, key_prefix):
         card = lv.obj(self)
-        card.set_size(lv.pct(100), 70)
+        card.set_size(lv.pct(100), 80)
         card.set_style_bg_color(BG_CARD_HEX, 0)
         card.set_style_bg_opa(lv.OPA.COVER, 0)
-        card.set_style_radius(8, 0)
+        card.set_style_radius(10, 0)
         card.set_style_border_width(0, 0)
         card.set_style_pad_all(PAD_SM, 0)
 
         name_lbl = lv.label(card)
         name_lbl.set_text(name)
-        name_lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        name_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         name_lbl.set_style_text_color(WHITE_HEX, 0)
         name_lbl.align(lv.ALIGN.TOP_LEFT, 0, 0)
 
         path_lbl = lv.label(card)
         path_lbl.set_text(path)
-        path_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        path_lbl.set_style_text_font(lv.font_montserrat_16, 0)
         path_lbl.set_style_text_color(GREY_LIGHT_HEX, 0)
         path_lbl.align(lv.ALIGN.BOTTOM_LEFT, 0, 0)
 
         # QR button
         qr_btn = lv.button(card)
-        qr_btn.set_size(36, 36)
+        qr_btn.set_size(56, 56)
         qr_btn.set_style_bg_opa(lv.OPA.TRANSP, 0)
         qr_btn.set_style_border_width(0, 0)
         qr_btn.set_style_shadow_width(0, 0)
         qr_btn.align(lv.ALIGN.RIGHT_MID, 0, 0)
 
         qr_ico = lv.image(qr_btn)
-        BTC_ICONS.QR_CODE(CYAN_HEX).add_to_parent(qr_ico, zoom=140)
+        BTC_ICONS.QR_CODE(CYAN_HEX).add_to_parent(qr_ico, zoom=220)
         qr_ico.center()
 
         card.add_flag(lv.obj.FLAG.CLICKABLE)

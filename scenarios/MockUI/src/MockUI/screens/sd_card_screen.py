@@ -40,12 +40,12 @@ class SDCardScreen(lv.obj):
 
         self.set_layout(lv.LAYOUT.FLEX)
         self.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-        self.set_style_pad_row(PAD_SM, 0)
+        self.set_style_pad_row(PAD_MD, 0)
 
         # Title
         title = lv.label(self)
         title.set_text("SD Card")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         # Check if SD is detected
@@ -66,22 +66,22 @@ class SDCardScreen(lv.obj):
         icon, color, type_label = _TYPE_CONFIG.get(filetype, (BTC_ICONS.FILE, WHITE_HEX, "File"))
 
         row = lv.button(self)
-        row.set_size(lv.pct(100), 54)
+        row.set_size(lv.pct(100), 84)
         row.set_style_bg_color(BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(8, 0)
+        row.set_style_radius(10, 0)
         row.set_style_border_width(0, 0)
         row.set_style_shadow_width(0, 0)
 
         row.set_layout(lv.LAYOUT.FLEX)
         row.set_flex_flow(lv.FLEX_FLOW.ROW)
         row.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-        row.set_style_pad_column(PAD_SM, 0)
-        row.set_style_pad_left(PAD_SM, 0)
+        row.set_style_pad_column(PAD_MD, 0)
+        row.set_style_pad_left(PAD_MD, 0)
 
         # Type icon (color-coded)
         ico = lv.image(row)
-        icon(color).add_to_parent(ico, zoom=130)
+        icon(color).add_to_parent(ico, zoom=210)
 
         # File info column
         info_col = lv.obj(row)
@@ -93,15 +93,15 @@ class SDCardScreen(lv.obj):
 
         name_lbl = lv.label(info_col)
         name_lbl.set_text(filename)
-        name_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        name_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         name_lbl.set_style_text_color(WHITE_HEX, 0)
         name_lbl.align(lv.ALIGN.TOP_LEFT, 0, 0)
 
         detail_lbl = lv.label(info_col)
         detail_lbl.set_text(type_label + " | " + size)
-        detail_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        detail_lbl.set_style_text_font(lv.font_montserrat_16, 0)
         detail_lbl.set_style_text_color(color, 0)
-        detail_lbl.align_to(name_lbl, lv.ALIGN.OUT_BOTTOM_LEFT, 0, 2)
+        detail_lbl.align_to(name_lbl, lv.ALIGN.OUT_BOTTOM_LEFT, 0, 4)
 
         # Click to process file
         row.add_event_cb(lambda e, fn=filename, ft=filetype: self._process_file(fn, ft), lv.EVENT.CLICKED, None)
@@ -146,25 +146,27 @@ class SDCardScreen(lv.obj):
         title.set_style_text_color(WHITE_HEX, 0)
 
         del_btn = lv.button(dialog)
-        del_btn.set_size(lv.pct(100), 44)
+        del_btn.set_size(lv.pct(100), 52)
         del_btn.set_style_bg_color(RED_HEX, 0)
         del_btn.set_style_radius(8, 0)
         del_btn.set_style_border_width(0, 0)
         del_btn.set_style_shadow_width(0, 0)
         del_lbl = lv.label(del_btn)
         del_lbl.set_text("Delete")
+        del_lbl.set_style_text_font(lv.font_montserrat_16, 0)
         del_lbl.set_style_text_color(WHITE_HEX, 0)
         del_lbl.center()
         del_btn.add_event_cb(lambda e: self._confirm_delete(filename), lv.EVENT.CLICKED, None)
 
         cancel_btn = lv.button(dialog)
-        cancel_btn.set_size(lv.pct(100), 40)
+        cancel_btn.set_size(lv.pct(100), 48)
         cancel_btn.set_style_bg_color(BG_ELEVATED_HEX, 0)
         cancel_btn.set_style_radius(8, 0)
         cancel_btn.set_style_border_width(0, 0)
         cancel_btn.set_style_shadow_width(0, 0)
         cancel_lbl = lv.label(cancel_btn)
         cancel_lbl.set_text("Cancel")
+        cancel_lbl.set_style_text_font(lv.font_montserrat_16, 0)
         cancel_lbl.set_style_text_color(GREY_LIGHT_HEX, 0)
         cancel_lbl.center()
         cancel_btn.add_event_cb(lambda e: self._close_modal(), lv.EVENT.CLICKED, None)

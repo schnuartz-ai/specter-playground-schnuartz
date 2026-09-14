@@ -61,7 +61,7 @@ class ReceiveScreen(lv.obj):
         title = lv.label(header)
         addr_type = "Change Addresses" if self._showing_change else "Receive Addresses"
         title.set_text(addr_type)
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
         title.align(lv.ALIGN.LEFT_MID, 0, 0)
 

@@ -1,13 +1,14 @@
 """Dashboard wallet list: simple rows with type symbols.
-Click → wallet info page. Long-press → dropdown options.
+Click → select this wallet (shown bigger + bordered; Receive then shows its
+addresses). Long-press → dropdown options.
 Grouping with headers is only shown in the Wallet Menu (wrench), not here.
 """
 import lvgl as lv
 from .ui_consts import (
-    WALLET_SECTION_HEIGHT, SCREEN_WIDTH, WALLET_ROW_HEIGHT,
+    WALLET_SECTION_HEIGHT, SCREEN_WIDTH, WALLET_ROW_HEIGHT, WALLET_ROW_HEIGHT_ACTIVE,
     PAD_SM, PAD_MD, PAD_XS,
     BG_BLACK_HEX, BG_CARD_HEX, BG_ELEVATED_HEX,
-    WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX,
+    WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX, CYAN_DARK_HEX,
     ORANGE_HEX, GREEN_HEX, GREY_HEX,
 )
 from .symbol_lib import BTC_ICONS
@@ -75,14 +76,14 @@ class WalletList(lv.obj):
         title.align(lv.ALIGN.LEFT_MID, 0, 0)
 
         wrench_btn = lv.button(header)
-        wrench_btn.set_size(32, 32)
+        wrench_btn.set_size(40, 40)
         wrench_btn.set_style_bg_opa(lv.OPA.TRANSP, 0)
         wrench_btn.set_style_border_width(0, 0)
         wrench_btn.set_style_shadow_width(0, 0)
         wrench_btn.align(lv.ALIGN.RIGHT_MID, 0, 0)
 
         wrench_ico = lv.image(wrench_btn)
-        BTC_ICONS.EDIT(GREY_LIGHT_HEX).add_to_parent(wrench_ico, zoom=150)
+        BTC_ICONS.EDIT(GREY_LIGHT_HEX).add_to_parent(wrench_ico, zoom=190)
         wrench_ico.center()
         wrench_btn.add_event_cb(self._wrench_cb, lv.EVENT.CLICKED, None)
 
@@ -92,7 +93,7 @@ class WalletList(lv.obj):
         self.wallet_container.set_style_bg_opa(lv.OPA.TRANSP, 0)
         self.wallet_container.set_style_border_width(0, 0)
         self.wallet_container.set_style_pad_all(0, 0)
-        self.wallet_container.set_style_pad_row(2, 0)
+        self.wallet_container.set_style_pad_row(PAD_MD, 0)
         self.wallet_container.set_layout(lv.LAYOUT.FLEX)
         self.wallet_container.set_flex_flow(lv.FLEX_FLOW.COLUMN)
         self.wallet_container.align_to(header, lv.ALIGN.OUT_BOTTOM_LEFT, 0, PAD_XS)
@@ -117,51 +118,77 @@ class WalletList(lv.obj):
         for w in others:
             self._add_row(w)
 
+    def hint_scroll(self):
+        """Briefly scroll down and back up to reveal there's more to see.
+
+        Only plays when the wallet list actually overflows its visible area.
+        Called when landing on the dashboard (not on every in-place refresh,
+        e.g. selecting a wallet), so it doesn't replay constantly.
+        """
+        def _peek(timer):
+            timer.delete()
+            bottom = self.wallet_container.get_scroll_bottom()
+            if bottom and bottom > 4:
+                self.wallet_container.scroll_to_y(bottom, True)
+
+                def _back(timer2):
+                    timer2.delete()
+                    self.wallet_container.scroll_to_y(0, True)
+
+                lv.timer_create(_back, 700, None)
+
+        lv.timer_create(_peek, 350, None)
+
     def _add_row(self, wallet):
         state = self.gui.specter_state
         is_active = state.active_wallet is wallet
 
         row = lv.button(self.wallet_container)
-        row.set_size(lv.pct(100), 38)
-        row.set_style_bg_color(BG_CARD_HEX, 0)
+        row.set_size(lv.pct(100), WALLET_ROW_HEIGHT_ACTIVE if is_active else WALLET_ROW_HEIGHT)
+        row.set_style_bg_color(BG_ELEVATED_HEX if is_active else BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(6, 0)
+        row.set_style_radius(10, 0)
         row.set_style_shadow_width(0, 0)
-        row.set_style_pad_left(PAD_SM, 0)
-        row.set_style_pad_right(PAD_SM, 0)
+        row.set_style_pad_left(PAD_MD, 0)
+        row.set_style_pad_right(PAD_MD, 0)
 
         if is_active:
-            row.set_style_border_width(1, 0)
+            row.set_style_border_width(2, 0)
+            row.set_style_border_side(lv.BORDER_SIDE.FULL, 0)
             row.set_style_border_color(CYAN_HEX, 0)
         else:
-            row.set_style_border_width(0, 0)
+            # Left accent bar (not on action buttons) marks these as a
+            # distinct, selectable list rather than plain nav buttons.
+            row.set_style_border_width(4, 0)
+            row.set_style_border_side(lv.BORDER_SIDE.LEFT, 0)
+            row.set_style_border_color(CYAN_DARK_HEX, 0)
 
         row.set_layout(lv.LAYOUT.FLEX)
         row.set_flex_flow(lv.FLEX_FLOW.ROW)
         row.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-        row.set_style_pad_column(PAD_XS, 0)
+        row.set_style_pad_column(PAD_SM, 0)
 
         # Type symbol
         sym = _get_type_symbol(wallet)
         if wallet.isMultiSig:
             ms_ico = lv.image(row)
-            BTC_ICONS.TWO_KEYS(ORANGE_HEX).add_to_parent(ms_ico, zoom=90)
+            BTC_ICONS.TWO_KEYS(ORANGE_HEX).add_to_parent(ms_ico, zoom=180)
         elif sym:
             sym_lbl = lv.label(row)
             sym_lbl.set_text(sym[0])
-            sym_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+            sym_lbl.set_style_text_font(lv.font_montserrat_16, 0)
             sym_lbl.set_style_text_color(sym[1], 0)
 
         # Account badge
         acc_lbl = lv.label(row)
         acc_lbl.set_text("Acc" + str(wallet.account))
-        acc_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        acc_lbl.set_style_text_font(lv.font_montserrat_16, 0)
         acc_lbl.set_style_text_color(CYAN_HEX, 0)
 
         # Wallet name
         name_lbl = lv.label(row)
         name_lbl.set_text(wallet.label)
-        name_lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        name_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         name_lbl.set_style_text_color(WHITE_HEX, 0)
         name_lbl.set_flex_grow(1)
 
@@ -173,16 +200,23 @@ class WalletList(lv.obj):
                 app_ico = lv.image(row)
                 icon = _get_app_icon(app)
                 if icon:
-                    icon.add_to_parent(app_ico, zoom=70)
+                    icon.add_to_parent(app_ico, zoom=140)
 
-        # Click → wallet info page
-        row.add_event_cb(lambda e, w=wallet: self._open_wallet(w), lv.EVENT.CLICKED, None)
-        # Long-press → dropdown options
+        # Selected indicator
+        if is_active:
+            check = lv.label(row)
+            check.set_text(lv.SYMBOL.OK)
+            check.set_style_text_font(lv.font_montserrat_22, 0)
+            check.set_style_text_color(CYAN_HEX, 0)
+
+        # Click → select this wallet (highlighted here; Receive shows its addresses)
+        row.add_event_cb(lambda e, w=wallet: self._select_wallet(w), lv.EVENT.CLICKED, None)
+        # Long-press → options (rename / receive / export / delete / details)
         row.add_event_cb(lambda e, w=wallet: self._long_press(w), lv.EVENT.LONG_PRESSED, None)
 
-    def _open_wallet(self, wallet):
+    def _select_wallet(self, wallet):
         self.gui.specter_state.set_active_wallet(wallet)
-        self.gui.show_menu("wallet_info")
+        self.refresh()
 
     def _long_press(self, wallet):
         self.gui.specter_state.set_active_wallet(wallet)

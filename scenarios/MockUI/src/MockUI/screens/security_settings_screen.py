@@ -1,20 +1,24 @@
-"""Export menu: wallet export options optimized per wallet type."""
+"""Security Settings submenu: backup/restore, firmware info, wipe device.
+
+Split out of the main Settings page so Security groups as its own submenu,
+matching the section layout of the upstream specter-playground Settings page
+(https://github.com/k9ert/specter-playground) rather than one long flat list.
+"""
 import lvgl as lv
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM, ROW_HEIGHT, ROW_ICON_ZOOM,
+    PAD_MD, PAD_SM,
     BG_BLACK_HEX, BG_CARD_HEX,
-    WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX,
+    WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX, RED_HEX,
 )
 from ..basic.symbol_lib import BTC_ICONS
 
 
-class ExportMenu(lv.obj):
-    """Wallet export options screen."""
+class SecuritySettingsScreen(lv.obj):
+    """Security-related settings, grouped separately from general device settings."""
 
     def __init__(self, gui, parent):
         super().__init__(parent)
         self.gui = gui
-        self.wallet = gui.specter_state.active_wallet
 
         self.set_size(lv.pct(100), lv.pct(100))
         self.set_style_bg_color(BG_BLACK_HEX, 0)
@@ -27,24 +31,24 @@ class ExportMenu(lv.obj):
         self.set_flex_flow(lv.FLEX_FLOW.COLUMN)
         self.set_style_pad_row(PAD_SM, 0)
 
-        # Title
         title = lv.label(self)
-        wallet_name = self.wallet.label if self.wallet else "Wallet"
-        title.set_text("Export: " + wallet_name)
+        title.set_text("Security Settings")
         title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
-        # Export options
-        self._add_option("Export via QR Code", BTC_ICONS.QR_CODE, "export_qr")
-        self._add_option("Export to SD Card", BTC_ICONS.SD_CARD, "export_sd")
-        self._add_option("Export xPub", BTC_ICONS.KEY, "xpub_export")
+        self._add_nav_item("Backup / Restore", BTC_ICONS.SAFE, "backup")
+        self._add_nav_item("Firmware Info", BTC_ICONS.INFO, "firmware_info")
 
-        if self.wallet and self.wallet.isMultiSig:
-            self._add_option("Export Multisig Config", BTC_ICONS.TWO_KEYS, "export_multisig")
+        danger_lbl = lv.label(self)
+        danger_lbl.set_text("Danger Zone")
+        danger_lbl.set_style_text_font(lv.font_montserrat_22, 0)
+        danger_lbl.set_style_text_color(RED_HEX, 0)
 
-    def _add_option(self, text, icon, target):
+        self._add_nav_item("Wipe Device", BTC_ICONS.TRASH, "wipe_device", color=RED_HEX)
+
+    def _add_nav_item(self, text, icon, target, color=None):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), ROW_HEIGHT)
+        btn.set_size(lv.pct(100), 60)
         btn.set_style_bg_color(BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
         btn.set_style_radius(10, 0)
@@ -58,17 +62,17 @@ class ExportMenu(lv.obj):
         btn.set_style_pad_left(PAD_MD, 0)
 
         ico = lv.image(btn)
-        icon(CYAN_HEX).add_to_parent(ico, zoom=ROW_ICON_ZOOM)
+        txt_color = color if color else WHITE_HEX
+        icon(txt_color).add_to_parent(ico, zoom=150)
 
         lbl = lv.label(btn)
         lbl.set_text(text)
         lbl.set_style_text_font(lv.font_montserrat_22, 0)
-        lbl.set_style_text_color(WHITE_HEX, 0)
+        lbl.set_style_text_color(txt_color, 0)
         lbl.set_flex_grow(1)
 
         arrow = lv.label(btn)
         arrow.set_text(lv.SYMBOL.RIGHT)
-        arrow.set_style_text_font(lv.font_montserrat_16, 0)
         arrow.set_style_text_color(GREY_LIGHT_HEX, 0)
 
         btn.add_event_cb(lambda e, t=target: self.gui.show_menu(t), lv.EVENT.CLICKED, None)

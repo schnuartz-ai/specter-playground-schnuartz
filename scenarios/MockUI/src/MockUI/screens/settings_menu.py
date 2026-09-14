@@ -5,7 +5,6 @@ from ..basic.ui_consts import (
     SCREEN_WIDTH, PAD_MD, PAD_SM, PAD_LG,
     BG_BLACK_HEX, BG_CARD_HEX, BG_ELEVATED_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX, GREEN_HEX, GREY_HEX,
-    RED_HEX,
 )
 from ..basic.symbol_lib import BTC_ICONS
 
@@ -32,12 +31,12 @@ class SettingsMenu(lv.obj):
         # Title
         title = lv.label(self)
         title.set_text("Settings")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         # === Interface Status Bar (moved from old top bar) ===
         iface_card = lv.obj(self)
-        iface_card.set_size(lv.pct(100), 60)
+        iface_card.set_size(lv.pct(100), 84)
         iface_card.set_style_bg_color(BG_CARD_HEX, 0)
         iface_card.set_style_bg_opa(lv.OPA.COVER, 0)
         iface_card.set_style_radius(10, 0)
@@ -69,7 +68,7 @@ class SettingsMenu(lv.obj):
         # Device section
         section_lbl = lv.label(self)
         section_lbl.set_text("Device")
-        section_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        section_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         section_lbl.set_style_text_color(GREY_LIGHT_HEX, 0)
 
         self._add_toggle_row("Power", state.battery_pct is not None, self._power_cb)
@@ -77,22 +76,15 @@ class SettingsMenu(lv.obj):
         self._add_nav_item("Manage Interfaces", BTC_ICONS.USB, "interfaces")
         self._add_nav_item("Language", BTC_ICONS.GLOBE, "language_settings")
 
-        # Security section
+        # Security: grouped as its own submenu (backup/restore, firmware info,
+        # wipe device), matching the section layout of the upstream
+        # specter-playground Settings page.
         sec_lbl = lv.label(self)
         sec_lbl.set_text("Security")
-        sec_lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        sec_lbl.set_style_text_font(lv.font_montserrat_22, 0)
         sec_lbl.set_style_text_color(GREY_LIGHT_HEX, 0)
 
-        self._add_nav_item("Backup / Restore", BTC_ICONS.SAFE, "backup")
-        self._add_nav_item("Firmware Info", BTC_ICONS.INFO, "firmware_info")
-
-        # Danger zone
-        danger_lbl = lv.label(self)
-        danger_lbl.set_text("Danger Zone")
-        danger_lbl.set_style_text_font(lv.font_montserrat_12, 0)
-        danger_lbl.set_style_text_color(RED_HEX, 0)
-
-        self._add_nav_item("Wipe Device", BTC_ICONS.TRASH, "wipe_device", color=RED_HEX)
+        self._add_nav_item("Security Settings", BTC_ICONS.SAFE, "security_settings")
 
     def _add_iface_icon(self, parent, icon, label, enabled, target):
         color = GREEN_HEX if enabled else GREY_HEX
@@ -100,7 +92,7 @@ class SettingsMenu(lv.obj):
 
     def _add_iface_icon_colored(self, parent, icon, label, color, target):
         btn = lv.button(parent)
-        btn.set_size(lv.SIZE_CONTENT, 48)
+        btn.set_size(lv.SIZE_CONTENT, 68)
         btn.set_style_bg_opa(lv.OPA.TRANSP, 0)
         btn.set_style_border_width(0, 0)
         btn.set_style_shadow_width(0, 0)
@@ -111,33 +103,33 @@ class SettingsMenu(lv.obj):
         btn.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
 
         ico = lv.image(btn)
-        icon(color).add_to_parent(ico, zoom=150)
+        icon(color).add_to_parent(ico, zoom=220)
 
         lbl = lv.label(btn)
         lbl.set_text(label)
-        lbl.set_style_text_font(lv.font_montserrat_12, 0)
+        lbl.set_style_text_font(lv.font_montserrat_16, 0)
         lbl.set_style_text_color(color, 0)
 
         btn.add_event_cb(lambda e, t=target: self.gui.show_menu(t), lv.EVENT.CLICKED, None)
 
     def _add_toggle_row(self, text, initial_state, callback):
         row = lv.obj(self)
-        row.set_size(lv.pct(100), 48)
+        row.set_size(lv.pct(100), 60)
         row.set_style_bg_color(BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(8, 0)
+        row.set_style_radius(10, 0)
         row.set_style_border_width(0, 0)
         row.set_style_pad_left(PAD_MD, 0)
         row.set_style_pad_right(PAD_MD, 0)
 
         lbl = lv.label(row)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(WHITE_HEX, 0)
         lbl.align(lv.ALIGN.LEFT_MID, 0, 0)
 
         sw = lv.switch(row)
-        sw.set_size(50, 26)
+        sw.set_size(62, 32)
         sw.align(lv.ALIGN.RIGHT_MID, 0, 0)
         if initial_state:
             sw.add_state(lv.STATE.CHECKED)
@@ -146,10 +138,10 @@ class SettingsMenu(lv.obj):
 
     def _add_nav_item(self, text, icon, target, color=None):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), 48)
+        btn.set_size(lv.pct(100), 60)
         btn.set_style_bg_color(BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        btn.set_style_radius(8, 0)
+        btn.set_style_radius(10, 0)
         btn.set_style_border_width(0, 0)
         btn.set_style_shadow_width(0, 0)
 
@@ -161,11 +153,11 @@ class SettingsMenu(lv.obj):
 
         ico = lv.image(btn)
         txt_color = color if color else WHITE_HEX
-        icon(txt_color).add_to_parent(ico, zoom=130)
+        icon(txt_color).add_to_parent(ico, zoom=150)
 
         lbl = lv.label(btn)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(txt_color, 0)
         lbl.set_flex_grow(1)
 

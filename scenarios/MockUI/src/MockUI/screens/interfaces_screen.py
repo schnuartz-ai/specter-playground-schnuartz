@@ -1,7 +1,7 @@
 """Interfaces screen: enable/disable hardware interfaces."""
 import lvgl as lv
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM,
+    PAD_MD, PAD_SM, ROW_HEIGHT, ROW_ICON_ZOOM,
     BG_BLACK_HEX, BG_CARD_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX,
 )
@@ -28,7 +28,7 @@ class InterfacesScreen(lv.obj):
 
         title = lv.label(self)
         title.set_text("Interfaces")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         state = gui.specter_state
@@ -47,10 +47,10 @@ class InterfacesScreen(lv.obj):
 
     def _add_toggle_row(self, icon, text, state_attr):
         row = lv.obj(self)
-        row.set_size(lv.pct(100), 56)
+        row.set_size(lv.pct(100), ROW_HEIGHT)
         row.set_style_bg_color(BG_CARD_HEX, 0)
         row.set_style_bg_opa(lv.OPA.COVER, 0)
-        row.set_style_radius(8, 0)
+        row.set_style_radius(10, 0)
         row.set_style_border_width(0, 0)
         row.set_style_pad_left(PAD_MD, 0)
         row.set_style_pad_right(PAD_MD, 0)
@@ -61,16 +61,16 @@ class InterfacesScreen(lv.obj):
         row.set_style_pad_column(PAD_SM, 0)
 
         ico = lv.image(row)
-        icon(WHITE_HEX).add_to_parent(ico, zoom=140)
+        icon(WHITE_HEX).add_to_parent(ico, zoom=ROW_ICON_ZOOM)
 
         lbl = lv.label(row)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(WHITE_HEX, 0)
         lbl.set_flex_grow(1)
 
         sw = lv.switch(row)
-        sw.set_size(50, 26)
+        sw.set_size(62, 32)
         sw.set_style_bg_color(CYAN_HEX, lv.PART.INDICATOR | lv.STATE.CHECKED)
 
         enabled = bool(getattr(self.gui.specter_state, state_attr))

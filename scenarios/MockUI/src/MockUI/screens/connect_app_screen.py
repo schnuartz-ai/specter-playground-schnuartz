@@ -2,7 +2,7 @@
 Each app has its own logo from the companion-apps-specter icon set."""
 import lvgl as lv
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM, PAD_LG,
+    PAD_MD, PAD_SM, PAD_LG, ROW_HEIGHT, ROW_ICON_ZOOM,
     BG_BLACK_HEX, BG_CARD_HEX, BG_ELEVATED_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX, GREEN_HEX,
 )
@@ -62,7 +62,7 @@ class ConnectAppScreen(lv.obj):
 
         title = lv.label(self)
         title.set_text("Connect Companion App")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         if self.wallet:
@@ -77,13 +77,13 @@ class ConnectAppScreen(lv.obj):
 
     def _add_app_row(self, app_name, app_key, methods, already_shared):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), 48)
+        btn.set_size(lv.pct(100), ROW_HEIGHT)
         btn.set_style_bg_color(BG_ELEVATED_HEX if already_shared else BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        btn.set_style_radius(8, 0)
+        btn.set_style_radius(10, 0)
         btn.set_style_shadow_width(0, 0)
         if already_shared:
-            btn.set_style_border_width(1, 0)
+            btn.set_style_border_width(2, 0)
             btn.set_style_border_color(GREEN_HEX, 0)
         else:
             btn.set_style_border_width(0, 0)
@@ -92,27 +92,29 @@ class ConnectAppScreen(lv.obj):
         btn.set_flex_flow(lv.FLEX_FLOW.ROW)
         btn.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
         btn.set_style_pad_column(PAD_SM, 0)
-        btn.set_style_pad_left(PAD_SM, 0)
+        btn.set_style_pad_left(PAD_MD, 0)
 
         # App logo
         ico = lv.image(btn)
         app_icon = _get_app_icon(app_key)
-        app_icon.add_to_parent(ico, zoom=130)
+        app_icon.add_to_parent(ico, zoom=ROW_ICON_ZOOM)
 
         # App name
         lbl = lv.label(btn)
         lbl.set_text(app_name)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(GREEN_HEX if already_shared else WHITE_HEX, 0)
         lbl.set_flex_grow(1)
 
         if already_shared:
             check = lv.label(btn)
             check.set_text(lv.SYMBOL.OK)
+            check.set_style_text_font(lv.font_montserrat_22, 0)
             check.set_style_text_color(GREEN_HEX, 0)
         else:
             arrow = lv.label(btn)
             arrow.set_text(lv.SYMBOL.RIGHT)
+            arrow.set_style_text_font(lv.font_montserrat_16, 0)
             arrow.set_style_text_color(GREY_LIGHT_HEX, 0)
 
         btn.add_event_cb(
@@ -151,7 +153,7 @@ class ConnectAppScreen(lv.obj):
         hdr.set_style_pad_column(PAD_SM, 0)
 
         logo = lv.image(hdr)
-        _get_app_icon(app_key).add_to_parent(logo, zoom=150)
+        _get_app_icon(app_key).add_to_parent(logo, zoom=190)
 
         name = lv.label(hdr)
         name.set_text(app_name)
@@ -161,10 +163,10 @@ class ConnectAppScreen(lv.obj):
         # Export method options
         for method in methods:
             m_btn = lv.button(dialog)
-            m_btn.set_size(lv.pct(100), 40)
+            m_btn.set_size(lv.pct(100), 52)
             m_btn.set_style_bg_color(BG_ELEVATED_HEX, 0)
             m_btn.set_style_bg_opa(lv.OPA.COVER, 0)
-            m_btn.set_style_radius(6, 0)
+            m_btn.set_style_radius(8, 0)
             m_btn.set_style_border_width(0, 0)
             m_btn.set_style_shadow_width(0, 0)
 
@@ -176,13 +178,13 @@ class ConnectAppScreen(lv.obj):
 
             if method == "QR Code":
                 m_ico = lv.image(m_btn)
-                BTC_ICONS.QR_CODE(CYAN_HEX).add_to_parent(m_ico, zoom=110)
+                BTC_ICONS.QR_CODE(CYAN_HEX).add_to_parent(m_ico, zoom=150)
             elif method == "SD Card":
                 m_ico = lv.image(m_btn)
-                BTC_ICONS.SD_CARD(CYAN_HEX).add_to_parent(m_ico, zoom=110)
+                BTC_ICONS.SD_CARD(CYAN_HEX).add_to_parent(m_ico, zoom=150)
             elif method == "USB":
                 m_ico = lv.image(m_btn)
-                BTC_ICONS.USB(CYAN_HEX).add_to_parent(m_ico, zoom=110)
+                BTC_ICONS.USB(CYAN_HEX).add_to_parent(m_ico, zoom=150)
 
             m_lbl = lv.label(m_btn)
             m_lbl.set_text("Export via " + method)
@@ -196,10 +198,10 @@ class ConnectAppScreen(lv.obj):
 
         # Cancel
         cancel = lv.button(dialog)
-        cancel.set_size(lv.pct(100), 36)
+        cancel.set_size(lv.pct(100), 48)
         cancel.set_style_bg_color(BG_CARD_HEX, 0)
         cancel.set_style_bg_opa(lv.OPA.COVER, 0)
-        cancel.set_style_radius(6, 0)
+        cancel.set_style_radius(8, 0)
         cancel.set_style_border_width(0, 0)
         cancel.set_style_shadow_width(0, 0)
         c_lbl = lv.label(cancel)

@@ -2,7 +2,7 @@
 Wallet Type (heading), Address Type (subheading), Account, Shared With (logos)."""
 import lvgl as lv
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM, PAD_LG, PAD_XS,
+    PAD_MD, PAD_SM, PAD_LG, PAD_XS, ROW_HEIGHT, ROW_ICON_ZOOM,
     BG_BLACK_HEX, BG_CARD_HEX, BG_ELEVATED_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, CYAN_HEX, GREEN_HEX, ORANGE_HEX,
 )
@@ -48,7 +48,7 @@ class WalletInfoScreen(lv.obj):
         # === Wallet Name (large) ===
         name_lbl = lv.label(self)
         name_lbl.set_text(w.label)
-        name_lbl.set_style_text_font(lv.font_montserrat_22, 0)
+        name_lbl.set_style_text_font(lv.font_montserrat_28, 0)
         name_lbl.set_style_text_color(WHITE_HEX, 0)
 
         # === Info Card with structured display ===
@@ -148,10 +148,10 @@ class WalletInfoScreen(lv.obj):
 
     def _add_action(self, text, icon, target):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), 48)
+        btn.set_size(lv.pct(100), ROW_HEIGHT)
         btn.set_style_bg_color(BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        btn.set_style_radius(8, 0)
+        btn.set_style_radius(10, 0)
         btn.set_style_border_width(0, 0)
         btn.set_style_shadow_width(0, 0)
 
@@ -162,16 +162,17 @@ class WalletInfoScreen(lv.obj):
         btn.set_style_pad_left(PAD_MD, 0)
 
         ico = lv.image(btn)
-        icon(CYAN_HEX).add_to_parent(ico, zoom=130)
+        icon(CYAN_HEX).add_to_parent(ico, zoom=ROW_ICON_ZOOM)
 
         lbl = lv.label(btn)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(WHITE_HEX, 0)
         lbl.set_flex_grow(1)
 
         arrow = lv.label(btn)
         arrow.set_text(lv.SYMBOL.RIGHT)
+        arrow.set_style_text_font(lv.font_montserrat_16, 0)
         arrow.set_style_text_color(GREY_LIGHT_HEX, 0)
 
         btn.add_event_cb(lambda e, t=target: self.gui.show_menu(t), lv.EVENT.CLICKED, None)

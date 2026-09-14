@@ -29,7 +29,7 @@ class AddressQRScreen(lv.obj):
 
         title = lv.label(self)
         title.set_text("Receive Address")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         # QR code placeholder

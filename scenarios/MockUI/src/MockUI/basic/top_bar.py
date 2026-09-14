@@ -34,7 +34,7 @@ class TopBar(lv.obj):
 
         # Hamburger menu button (right)
         self.hamburger_btn = lv.button(self)
-        self.hamburger_btn.set_size(44, 36)
+        self.hamburger_btn.set_size(56, 48)
         self.hamburger_btn.set_style_bg_opa(lv.OPA.TRANSP, 0)
         self.hamburger_btn.set_style_border_width(0, 0)
         self.hamburger_btn.set_style_shadow_width(0, 0)
@@ -42,7 +42,7 @@ class TopBar(lv.obj):
 
         # Hamburger icon (three lines using MENU icon)
         self.hamburger_ico = lv.image(self.hamburger_btn)
-        BTC_ICONS.MENU(WHITE_HEX).add_to_parent(self.hamburger_ico, zoom=180)
+        BTC_ICONS.MENU(WHITE_HEX).add_to_parent(self.hamburger_ico, zoom=300)
         self.hamburger_ico.center()
 
         self.hamburger_btn.add_event_cb(self._hamburger_cb, lv.EVENT.CLICKED, None)

@@ -3,7 +3,7 @@ Follows Specter-DIY approach — no testnet toggle."""
 import lvgl as lv
 import urandom
 from ..basic.ui_consts import (
-    PAD_MD, PAD_SM, PAD_LG,
+    PAD_MD, PAD_SM, PAD_LG, ROW_HEIGHT, ROW_ICON_ZOOM,
     BG_BLACK_HEX, BG_CARD_HEX,
     WHITE_HEX, GREY_LIGHT_HEX, GREY_DARK_HEX, CYAN_HEX, GREEN_HEX,
 )
@@ -59,7 +59,7 @@ class AddWalletScreen(lv.obj):
         create_lbl.set_style_text_font(lv.font_montserrat_12, 0)
         create_lbl.set_style_text_color(GREY_LIGHT_HEX, 0)
 
-        ROW_H = 58
+        ROW_H = 64
 
         # Wallet name
         name_row = self._make_row(ROW_H)
@@ -86,7 +86,7 @@ class AddWalletScreen(lv.obj):
         ms_lbl.set_style_text_color(WHITE_HEX, 0)
 
         self.ms_sw = lv.switch(ms_row)
-        self.ms_sw.set_size(50, 26)
+        self.ms_sw.set_size(62, 32)
         self.ms_sw.set_style_bg_color(CYAN_HEX, lv.PART.INDICATOR | lv.STATE.CHECKED)
         self.ms_sw.add_event_cb(self._on_multisig_toggle, lv.EVENT.VALUE_CHANGED, None)
 
@@ -135,7 +135,7 @@ class AddWalletScreen(lv.obj):
 
         # Create button
         create_btn = lv.button(self)
-        create_btn.set_size(lv.pct(100), 56)
+        create_btn.set_size(lv.pct(100), ROW_HEIGHT)
         create_btn.set_style_bg_color(GREEN_HEX, 0)
         create_btn.set_style_bg_opa(lv.OPA.COVER, 0)
         create_btn.set_style_radius(12, 0)
@@ -152,10 +152,10 @@ class AddWalletScreen(lv.obj):
 
     def _add_nav_btn(self, text, icon, target):
         btn = lv.button(self)
-        btn.set_size(lv.pct(100), 48)
+        btn.set_size(lv.pct(100), ROW_HEIGHT)
         btn.set_style_bg_color(BG_CARD_HEX, 0)
         btn.set_style_bg_opa(lv.OPA.COVER, 0)
-        btn.set_style_radius(8, 0)
+        btn.set_style_radius(10, 0)
         btn.set_style_border_width(0, 0)
         btn.set_style_shadow_width(0, 0)
 
@@ -166,16 +166,17 @@ class AddWalletScreen(lv.obj):
         btn.set_style_pad_left(PAD_MD, 0)
 
         ico = lv.image(btn)
-        icon(CYAN_HEX).add_to_parent(ico, zoom=130)
+        icon(CYAN_HEX).add_to_parent(ico, zoom=ROW_ICON_ZOOM)
 
         lbl = lv.label(btn)
         lbl.set_text(text)
-        lbl.set_style_text_font(lv.font_montserrat_16, 0)
+        lbl.set_style_text_font(lv.font_montserrat_22, 0)
         lbl.set_style_text_color(WHITE_HEX, 0)
         lbl.set_flex_grow(1)
 
         arrow = lv.label(btn)
         arrow.set_text(lv.SYMBOL.RIGHT)
+        arrow.set_style_text_font(lv.font_montserrat_16, 0)
         arrow.set_style_text_color(GREY_LIGHT_HEX, 0)
 
         btn.add_event_cb(lambda e, t=target: self.gui.show_menu(t), lv.EVENT.CLICKED, None)

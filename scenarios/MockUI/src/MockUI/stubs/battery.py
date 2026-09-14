@@ -18,9 +18,12 @@ class Battery(lv.obj):
         self.set_style_border_width(0, 0)
         self.level = lv.label(self)
         self.level.set_recolor(True)
+        self.level.set_style_text_font(lv.font_montserrat_22, 0)
         self.icon = lv.label(self)
+        self.icon.set_style_text_font(lv.font_montserrat_22, 0)
         self.charge = lv.label(self)
-        self.set_size(30,20)
+        self.charge.set_style_text_font(lv.font_montserrat_22, 0)
+        self.set_size(46, 30)
         # self.bar = lv.bar(self)
         self.update()
 

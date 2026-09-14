@@ -148,6 +148,7 @@ class SpecterGui(lv.obj):
         self.seed_dropdown.remove_flag(lv.obj.FLAG.HIDDEN)
         self.wallet_list.remove_flag(lv.obj.FLAG.HIDDEN)
         self.wallet_list.refresh()
+        self.wallet_list.hint_scroll()
         self.seed_dropdown.refresh()
 
         # Position content below wallet list

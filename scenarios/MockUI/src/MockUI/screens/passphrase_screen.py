@@ -39,7 +39,7 @@ class PassphraseScreen(lv.obj):
         # Title
         title = lv.label(self)
         title.set_text("Add Passphrase")
-        title.set_style_text_font(lv.font_montserrat_22, 0)
+        title.set_style_text_font(lv.font_montserrat_28, 0)
         title.set_style_text_color(WHITE_HEX, 0)
 
         # Info: base seed

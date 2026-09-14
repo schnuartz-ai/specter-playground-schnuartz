@@ -7,24 +7,32 @@ SCREEN_WIDTH = const(480)
 SCREEN_HEIGHT = const(800)
 
 # --- Layout zone heights (pixels) ---
-TOP_BAR_HEIGHT = const(40)
-SEED_DROPDOWN_HEIGHT = const(45)
+TOP_BAR_HEIGHT = const(56)
+SEED_DROPDOWN_HEIGHT = const(52)
 NAV_BAR_HEIGHT = const(56)
 
-# Wallet section: fits ~3 wallet rows
-WALLET_SECTION_HEIGHT = const(190)
+# Wallet section: fits ~3 wallet rows (bigger rows + more spacing between them)
+WALLET_SECTION_HEIGHT = const(260)
 
 # Action buttons fill remaining space
-# 800 - 40 - 45 - 190 - 56 = 469px for action area
+# 800 - 56 - 52 - 260 - 56 = 376px for action area
 
 # --- Button sizes ---
-BTN_SMALL_HEIGHT = const(70)
-BTN_LARGE_HEIGHT = const(110)      # Scan button (larger)
-BTN_RADIUS = const(12)
+# Sized so Scan + Receive + SD Card always fit the dashboard action area
+# without scrolling/clipping (see _DASHBOARD_H in specter_gui.py).
+BTN_SMALL_HEIGHT = const(80)        # SD Card
+BTN_MED_HEIGHT = const(92)          # Receive (below Scan, a notch smaller)
+BTN_LARGE_HEIGHT = const(140)       # Scan button (largest, centered)
+BTN_RADIUS = const(16)
 
 # --- Wallet row ---
-WALLET_ROW_HEIGHT = const(48)
+WALLET_ROW_HEIGHT = const(64)
+WALLET_ROW_HEIGHT_ACTIVE = const(78)
 WALLET_ICON_SIZE = const(20)
+
+# --- Standard list/nav row (used across settings, seed menu, wallet menu, etc.) ---
+ROW_HEIGHT = const(60)
+ROW_ICON_ZOOM = const(170)
 
 # --- Bottom nav ---
 NAV_BTN_SIZE = const(44)
@@ -83,47 +91,49 @@ EXPLAINER_WIDTH_PCT = const(70)
 EXPLAINER_HEIGHT_PCT = const(40)
 EXPLAINER_OVERLAY_OPA = const(200)
 
-# === COLOR SCHEME — Specter Cyan/Teal on Dark ===
+# === COLOR SCHEME — "Specter" theme, ported from the palette in
+# k9ert/specter-playground PR #35 (specter_ui_theme_specter.json v1.1):
+# navy canvas, single blue accent, teal/amber/coral semantics. ===
 
-# Primary
-CYAN = "#00B4D8"
-CYAN_HEX = lv.color_hex(0x00B4D8)
-CYAN_DARK = "#0077B6"
-CYAN_DARK_HEX = lv.color_hex(0x0077B6)
+# Primary (PR35 PRIMARY / SECONDARY — same blue for both)
+CYAN = "#1F99E5"
+CYAN_HEX = lv.color_hex(0x1F99E5)
+CYAN_DARK = "#1773AC"          # darkened PRIMARY, for pressed states/borders
+CYAN_DARK_HEX = lv.color_hex(0x1773AC)
 
-# Backgrounds
-BG_BLACK = "#000000"
-BG_BLACK_HEX = lv.color_hex(0x000000)
-BG_DARK = "#111111"
-BG_DARK_HEX = lv.color_hex(0x111111)
-BG_CARD = "#1A1A1A"
-BG_CARD_HEX = lv.color_hex(0x1A1A1A)
-BG_ELEVATED = "#222222"
-BG_ELEVATED_HEX = lv.color_hex(0x222222)
+# Backgrounds (PR35 CANVAS / QUATERNARY)
+BG_BLACK = "#081A2A"           # CANVAS
+BG_BLACK_HEX = lv.color_hex(0x081A2A)
+BG_DARK = "#081A2A"            # CANVAS (theme's BG.DARK also maps to CANVAS)
+BG_DARK_HEX = lv.color_hex(0x081A2A)
+BG_CARD = "#24384C"            # QUATERNARY
+BG_CARD_HEX = lv.color_hex(0x24384C)
+BG_ELEVATED = "#2E4864"        # lightened QUATERNARY, for active/selected rows
+BG_ELEVATED_HEX = lv.color_hex(0x2E4864)
 
-# Text
-WHITE = "#FFFFFF"
-WHITE_HEX = lv.color_hex(0xFFFFFF)
-GREY_LIGHT = "#AAAAAA"
-GREY_LIGHT_HEX = lv.color_hex(0xAAAAAA)
-GREY = "#606060"
-GREY_HEX = lv.color_hex(0x606060)
-GREY_DARK = "#333333"
-GREY_DARK_HEX = lv.color_hex(0x333333)
+# Text (PR35 INK / NEUTRAL)
+WHITE = "#F5F8FC"              # INK
+WHITE_HEX = lv.color_hex(0xF5F8FC)
+GREY_LIGHT = "#7D91A5"         # NEUTRAL
+GREY_LIGHT_HEX = lv.color_hex(0x7D91A5)
+GREY = "#5C6E80"               # darkened NEUTRAL
+GREY_HEX = lv.color_hex(0x5C6E80)
+GREY_DARK = "#3A4E63"          # between QUATERNARY and NEUTRAL, for dividers
+GREY_DARK_HEX = lv.color_hex(0x3A4E63)
 
-# Semantic
-GREEN = "#00CC66"
-GREEN_HEX = lv.color_hex(0x00CC66)
-ORANGE = "#FF9A00"
-ORANGE_HEX = lv.color_hex(0xFF9A00)
-RED = "#FF4444"
-RED_HEX = lv.color_hex(0xFF4444)
-YELLOW = "#FFD700"
-YELLOW_HEX = lv.color_hex(0xFFD700)
+# Semantic (PR35 SUCCESS / WARNING / DANGER)
+GREEN = "#31D39A"
+GREEN_HEX = lv.color_hex(0x31D39A)
+ORANGE = "#F5B84B"
+ORANGE_HEX = lv.color_hex(0xF5B84B)
+RED = "#FF6878"
+RED_HEX = lv.color_hex(0xFF6878)
+YELLOW = "#F5B84B"             # theme has no separate yellow; alias to WARNING
+YELLOW_HEX = lv.color_hex(0xF5B84B)
 
 BLACK = "#000000"
 BLACK_HEX = lv.color_hex(0x000000)
 
-# Warning background (subtle orange tint for address reuse, security warnings)
-BG_WARN = "#2A1A00"
-BG_WARN_HEX = lv.color_hex(0x2A1A00)
+# Warning background (subtle amber tint for address reuse, security warnings)
+BG_WARN = "#332912"
+BG_WARN_HEX = lv.color_hex(0x332912)
